@@ -1,4 +1,5 @@
 """Local HackAlem prototype. Catalog is live; cart is explicitly demonstration-only."""
+from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 import base64
 from uploads import extract_items, MAX_FILE
 from analogs import comparison
@@ -189,14 +190,18 @@ def validate_amount(product, amount):
         raise UserError(f'Недостаточно товара. Подтверждённый общий остаток: {stock(product):g}.')
 
 
-def propose(session, product_id, amount, source=catalog):
+def propose(session, product_id, amount, source=catalog, mode="add"):
+    if mode not in ("add", "set"):
+        raise UserError("Неизвестное действие с корзиной.")
     amount = quantity(amount)
     product = source.detail(product_id)
     with session['lock']:
         existing = session['cart'].get(str(product['id']), {}).get('quantity', 0)
-        validate_amount(product, amount + existing)
+        if mode == 'set' and str(product['id']) not in session['cart']:
+            raise UserError('Позиция уже удалена. Обновите корзину.')
+        validate_amount(product, amount if mode == 'set' else amount + existing)
         token = secrets.token_urlsafe(24)
-        offer = {'token': token, 'product': product, 'quantity': amount, 'expires': time.time() + 300}
+        offer = {'token': token, 'product': product, 'quantity': amount, 'mode': mode, 'previous_quantity': existing, 'expires': time.time() + 300}
         session['offers'][token] = offer
         return offer
 
@@ -213,11 +218,44 @@ def confirm(session, token, confirmed, source=catalog):
             session['offers'].pop(token, None)
             raise UserError('Цена изменилась. Создайте новое предложение и подтвердите актуальную цену.')
         key = str(product['id'])
-        total = session['cart'].get(key, {}).get('quantity', 0) + offer['quantity']
+        existing = session['cart'].get(key, {}).get('quantity', 0)
+        if offer.get('mode') == 'set' and existing != offer['previous_quantity']:
+            session['offers'].pop(token, None)
+            raise UserError('Корзина изменилась. Проверьте количество и создайте новое предложение.')
+        total = offer['quantity'] if offer.get('mode') == 'set' else existing + offer['quantity']
         validate_amount(product, total)
         session['cart'][key] = {'product': product, 'quantity': total}
         del session['offers'][token]
         return list(session['cart'].values())
+
+
+def remove_item(session, product_id, confirmed):
+    if confirmed is not True:
+        raise UserError('Подтвердите удаление позиции.')
+    key = str(product_id)
+    with session['lock']:
+        session['cart'].pop(key, None)
+        session['offers'] = {token: offer for token, offer in session['offers'].items()
+                             if str(offer['product']['id']) != key}
+
+
+def cart_view(session):
+    with session['lock']:
+        items = []
+        total = Decimal('0')
+        complete = True
+        for item in session['cart'].values():
+            subtotal = None
+            try:
+                price = Decimal(str(item['product'].get('price')))
+                if not price.is_finite() or price < 0:
+                    raise InvalidOperation()
+                subtotal = (price * Decimal(str(item['quantity']))).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
+                total += subtotal
+            except (InvalidOperation, ValueError, TypeError):
+                complete = False
+            items.append({**item, 'subtotal': str(subtotal) if subtotal is not None else None})
+        return {'items': items, 'total': str(total) if complete else None, 'mode': 'demo'}
 
 
 def model_answer(message, products, history):
@@ -286,8 +324,7 @@ class Handler(BaseHTTPRequestHandler):
             return self.send({'ready': catalog.ready, 'count': len(catalog.index), 'error': catalog.error,
                               'ai': bool(os.getenv('OPENAI_API_KEY')), 'csrf': s['csrf'], 'cart_mode': 'demo'})
         if path == '/api/cart':
-            with s['lock']:
-                return self.send({'items': list(s['cart'].values()), 'mode': 'demo'})
+            return self.send(cart_view(s))
         files = {'/': 'index.html', '/cart': 'index.html', '/app.js': 'app.js', '/style.css': 'style.css'}
         if path not in files:
             return self.send({'error': 'Не найдено'}, 404)
@@ -307,7 +344,10 @@ class Handler(BaseHTTPRequestHandler):
             if not isinstance(body, dict):
                 raise UserError('Некорректный запрос.')
             if self.path == '/api/propose':
-                return self.send(propose(s, body.get('id'), body.get('quantity')))
+                return self.send(propose(s, body.get('id'), body.get('quantity'), mode=body.get('mode', 'add')))
+            if self.path == '/api/cart/remove':
+                remove_item(s, body.get('id'), body.get('confirmed'))
+                return self.send(cart_view(s))
             if self.path == '/api/confirm':
                 return self.send({'items': confirm(s, body.get('token'), body.get('confirmed')), 'url': '/cart'})
             if self.path == '/api/upload':

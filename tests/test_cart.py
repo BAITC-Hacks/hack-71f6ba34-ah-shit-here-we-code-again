@@ -43,3 +43,39 @@ class CartTests(unittest.TestCase):
         with self.assertRaises(UserError):confirm(self.s,o['token'],True,self.api)
 
 if __name__=='__main__':unittest.main()
+
+class CartManagementTests(unittest.TestCase):
+    def setUp(self):
+        self.s=session();self.api=Source()
+        o=propose(self.s,1,2,self.api);confirm(self.s,o['token'],True,self.api)
+    def test_set_is_not_add_and_requires_confirmation(self):
+        o=propose(self.s,1,3,self.api,mode='set')
+        self.assertEqual(self.s['cart']['1']['quantity'],2)
+        confirm(self.s,o['token'],True,self.api)
+        self.assertEqual(self.s['cart']['1']['quantity'],3)
+    def test_stale_edit_is_rejected(self):
+        a=propose(self.s,1,3,self.api,mode='set')
+        b=propose(self.s,1,4,self.api,mode='set');confirm(self.s,b['token'],True,self.api)
+        with self.assertRaises(UserError):confirm(self.s,a['token'],True,self.api)
+        self.assertEqual(self.s['cart']['1']['quantity'],4)
+    def test_remove_requires_confirmation_and_invalidates_offers(self):
+        from server import remove_item
+        o=propose(self.s,1,3,self.api,mode='set')
+        with self.assertRaises(UserError):remove_item(self.s,1,'true')
+        remove_item(self.s,1,True)
+        self.assertEqual(self.s['cart'],{})
+        with self.assertRaises(UserError):confirm(self.s,o['token'],True,self.api)
+    def test_remove_is_session_scoped(self):
+        from server import remove_item
+        remove_item(session(),1,True)
+        self.assertIn('1',self.s['cart'])
+    def test_total_uses_decimal_and_unknown_is_not_zero(self):
+        from server import cart_view
+        self.s['cart']['1']['product']['price']='0.10';self.s['cart']['1']['quantity']=3
+        self.assertEqual(cart_view(self.s)['total'],'0.30')
+        self.s['cart']['1']['product']['price']=None
+        self.assertIsNone(cart_view(self.s)['total'])
+    def test_set_rechecks_stock(self):
+        o=propose(self.s,1,4,self.api,mode='set');self.api.amount=3
+        with self.assertRaises(UserError):confirm(self.s,o['token'],True,self.api)
+        self.assertEqual(self.s['cart']['1']['quantity'],2)

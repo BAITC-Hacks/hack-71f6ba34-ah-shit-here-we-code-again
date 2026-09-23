@@ -3,3 +3,5 @@
 .upload-controls{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:9px;align-items:center;border-top:1px solid #ddd;padding-top:10px;font-size:12px}.upload-controls input[type=file]{max-width:100%;width:240px}.upload-controls .upload-consent{display:flex;align-items:center;gap:7px}.upload-controls input[type=checkbox]{width:auto}.upload-controls span{width:100%;color:#626d68}.extracted-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px 0;border-bottom:1px solid #ddd}.extracted-row input{flex:1;min-width:150px;padding:9px}.extracted-row span{font-size:12px}.message a{display:inline-block;margin-right:12px}
 
 #composer .upload-controls button{position:static;font-size:12px;padding:9px 12px}#composer{padding-right:16px}#question{padding-right:45px}.message{overflow-wrap:anywhere}
+
+.cart-controls{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}.cart-controls input{width:85px;padding:10px;border:1px solid var(--line);border-radius:8px}.cart-controls button{font-size:12px}
