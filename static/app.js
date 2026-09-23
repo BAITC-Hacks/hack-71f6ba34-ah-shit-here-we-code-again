@@ -53,7 +53,7 @@ async function cart(){
  if(data.items.length)box.append(el('h3','','Итого по сохранённым ценам: '+(data.total===null?'есть позиции без подтверждённой цены':money(data.total))),el('p','muted','Доставка не включена. Это собственная корзина прототипа, заказ в EKT не оформляется.'));
 }
 
-async function init(){try{const s=await api('/api/status');csrf=s.csrf;$('#ai-status').textContent=s.ai?'ИИ подключён • ответы по данным каталога':'Режим каталога • API-ключ ИИ ещё не подключён';$('#catalog-status').textContent=s.ready?s.count+' товаров в выборке':s.error||'Каталог загружается…';await cart();if(!s.ready&&!s.error)setTimeout(init,2000);}catch(e){$('#catalog-status').textContent=e.message;}}
+async function init(){try{const s=await api('/api/status');csrf=s.csrf;if(s.data_mode==='snapshot'){$('.source strong').textContent='Демо-снимок EKT';$('footer').textContent='Снимок от 23.09.2026: цены и остатки не актуальные. Проверка без ИИ и внешних запросов.';$('.prototype').textContent='Демонстрационные данные • не актуальные цены и остатки. Корзина не создаёт заказ EKT.';$('#upload').disabled=true;}$('#ai-status').textContent=s.ai?'ИИ подключён • ответы по данным каталога':s.data_mode==='snapshot'?'Демо без ИИ • цены и остатки из снимка':'Режим каталога • API-ключ ИИ ещё не подключён';$('#catalog-status').textContent=s.ready?s.count+' товаров в выборке':s.error||'Каталог загружается…';await cart();if(!s.ready&&!s.error)setTimeout(init,2000);}catch(e){$('#catalog-status').textContent=e.message;}}
 if(location.pathname==='/cart'){$('#messages').hidden=true;$('#composer').hidden=true;$('#cart-panel').hidden=false;}
 init();
 

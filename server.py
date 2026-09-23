@@ -12,6 +12,8 @@ import os
 from pathlib import Path
 import re
 import secrets
+import sys
+import copy
 import threading
 import time
 import urllib.error
@@ -19,6 +21,7 @@ import urllib.parse
 import urllib.request
 
 ROOT = Path(__file__).resolve().parent
+DEMO_MODE = "--demo" in sys.argv
 for line in (ROOT / '.env').read_text().splitlines() if (ROOT / '.env').exists() else []:
     if '=' in line and not line.lstrip().startswith('#'):
         k, v = line.split('=', 1)
@@ -47,6 +50,15 @@ class Catalog:
         self.error = None
 
     def request(self, path):
+        if DEMO_MODE:
+            snapshot = json.loads((ROOT / 'demo' / 'catalog.json').read_text())
+            if path.startswith('products/detail?id='):
+                product_id = path.split('=', 1)[1]
+                for item in snapshot['items']:
+                    if str(item['id']) == product_id:
+                        return copy.deepcopy(item)
+                raise UserError('Товар не найден в демонстрационном снимке.')
+            return {'items': copy.deepcopy(snapshot['items']) if path == 'products?page=1' else []}
         user, password = os.getenv('EKT_API_USER'), os.getenv('EKT_API_PASSWORD')
         if not user or not password:
             raise UserError('Не настроен доступ к каталогу ekt.kz. Заполните серверный .env.')
@@ -97,7 +109,7 @@ class Catalog:
                 warnings.append('В каталоге расходится номинальный ток: название — ' + in_name.group(1)
                                 + ' А, характеристика — ' + str(nominal) + '. Уточните у специалиста до выбора.')
         raw['warnings'] = warnings
-        raw['checked_at'] = time.strftime('%H:%M:%S')
+        raw['checked_at'] = '23.09.2026 — демо-снимок, не актуальные остатки' if DEMO_MODE else time.strftime('%H:%M:%S')
         raw['certificates'] = []
         for key, val in props.items():
             if re.search('sert|cert|сертиф', key, re.I):
@@ -260,7 +272,7 @@ def cart_view(session):
 
 def model_answer(message, products, history):
     key = os.getenv('OPENAI_API_KEY')
-    if not key:
+    if not key or DEMO_MODE:
         return None
     context = json.dumps(products, ensure_ascii=False)
     policies = (ROOT / 'docs' / 'purchase-conditions.md').read_text()
@@ -322,7 +334,7 @@ class Handler(BaseHTTPRequestHandler):
         s = self.session()
         if path == '/api/status':
             return self.send({'ready': catalog.ready, 'count': len(catalog.index), 'error': catalog.error,
-                              'ai': bool(os.getenv('OPENAI_API_KEY')), 'csrf': s['csrf'], 'cart_mode': 'demo'})
+                              'ai': bool(os.getenv('OPENAI_API_KEY')) and not DEMO_MODE, 'data_mode': 'snapshot' if DEMO_MODE else 'live', 'csrf': s['csrf'], 'cart_mode': 'demo'})
         if path == '/api/cart':
             return self.send(cart_view(s))
         files = {'/': 'index.html', '/cart': 'index.html', '/app.js': 'app.js', '/style.css': 'style.css'}
@@ -351,6 +363,8 @@ class Handler(BaseHTTPRequestHandler):
             if self.path == '/api/confirm':
                 return self.send({'items': confirm(s, body.get('token'), body.get('confirmed')), 'url': '/cart'})
             if self.path == '/api/upload':
+                if DEMO_MODE:
+                    raise UserError('В режиме без ключей распознавание отключено. Запустите обычный режим с OpenAI API для проверки файлов.')
                 try:
                     extracted = extract_items(body, fetch_json, os.getenv('OPENAI_API_KEY'), os.getenv('OPENAI_MODEL','gpt-4.1-mini'))
                 except ValueError as exc:
@@ -395,7 +409,7 @@ class Handler(BaseHTTPRequestHandler):
                     ids.add(str(p['id']))
             answer = None
             ai_error = None
-            if os.getenv('OPENAI_API_KEY') and not policy_question:
+            if os.getenv('OPENAI_API_KEY') and not policy_question and not DEMO_MODE:
                 try:
                     answer = model_answer(message, products, s['history'])
                 except UserError:
@@ -404,7 +418,7 @@ class Handler(BaseHTTPRequestHandler):
                 if policy_question:
                     answer = 'По странице «Условия доставки и оплаты»: физлица — карта онлайн, наличные при получении, наличные или POS при самовывозе. Юрлица — перевод по счёту либо наличные при самовывозе; представителю нужны удостоверение личности и актуальная доверенность.\n\nПо доставке есть противоречия: основной раздел указывает для Алматы порог бесплатной доставки свыше 30 000 ₸ и срок до 48 часов (09:00–17:00); страница «Как сделать заказ» — свыше 15 000 ₸, следующий день (09:00–18:00). Поэтому стоимость и срок следует подтвердить у менеджера. Для других городов также согласуйте адрес, вес и объём.\n\nОбщая минимальная сумма заказа в проверенных разделах не найдена. Кратность отдельной позиции берём из карточки товара. Проверено 23.09.2026; ссылки ниже.'
                 elif products:
-                    answer = 'Нашёл позиции в доступной выборке каталога. Остатки и характеристики только что получены из ekt.kz. Выберите товар и количество — перед добавлением я отдельно попрошу подтверждение.'
+                    answer = ('Найдены позиции в демонстрационном снимке от 23.09.2026. Цены и остатки не актуальные. Это режим проверки без ИИ и внешних запросов.' if DEMO_MODE else 'Нашёл позиции в доступной выборке каталога. Остатки и характеристики только что получены из ekt.kz. Выберите товар и количество — перед добавлением я отдельно попрошу подтверждение.')
                 else:
                     answer = 'В текущей выборке товар не найден. Уточните артикул или название. Сейчас доступна ограниченная выборка, а не весь каталог ekt.kz.'
             s['history'] = (s['history'] + [{'role': 'user', 'content': message}, {'role': 'assistant', 'content': answer}])[-8:]

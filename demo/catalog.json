@@ -1,0 +1,507 @@
+{
+  "captured_on": "2026-09-23",
+  "notice": "Демонстрационный снимок EKT от 23.09.2026. Цены и остатки НЕ актуальные; используются только для проверки прототипа.",
+  "items": [
+    {
+      "id": 515291,
+      "article": "200300285_",
+      "name": "027228 АВ DRX250 MT 3ф 160А 18ka Legrand (1)",
+      "price": 64920,
+      "quantity": 23,
+      "properties": {
+        "BRAND_PRIORITY": "1",
+        "CML2_ARTICLE": "200300285_",
+        "NOVINKA": "Да",
+        "SPETSPREDLOZHENIE": "Нет",
+        "RECOMMEND": [
+          "48783",
+          "23466",
+          "28727"
+        ],
+        "CML2_BAR_CODE": "3414970344526",
+        "CML2_TRAITS": [
+          "Готовая продукция",
+          "Товар",
+          "200300285_",
+          "Да",
+          "Нет",
+          "027228 АВ DRX250 MT 3ф 160А 18ka Legrand (1)",
+          "0,00212",
+          "1,467",
+          "0",
+          "0",
+          "0"
+        ],
+        "CML2_TAXES": "16",
+        "KRATNOST_MIN": "1",
+        "IMYAKARTINKI": "Legrand.jpg",
+        "ARTIKULPOSTAVSHCHIKA": "027228",
+        "OBYEM": "Автоматический выключатель",
+        "KOLICHESTVO_POLYUSOV": "3",
+        "NOMINALNAYA_OTKLYUCHAYUSHCHAYA_SPOSOBNOST": "18кА",
+        "NOMINALNOE_NAPRYAZHENIE": "400В",
+        "NOMINALNYY_TOK": "250 А",
+        "TIP_USTANOVKI": "Винтовое",
+        "TORGOVAYA_MARKA": "Legrand"
+      },
+      "stores": [
+        {
+          "id": 2,
+          "name": "Брак MEGALIGHT",
+          "quantity": 0
+        },
+        {
+          "id": 3,
+          "name": "Шымкент (ул.Байдукова)",
+          "quantity": 2
+        },
+        {
+          "id": 4,
+          "name": "Маркетинг MEGALIGHT",
+          "quantity": 0
+        },
+        {
+          "id": 5,
+          "name": "Никонов",
+          "quantity": 0
+        },
+        {
+          "id": 6,
+          "name": "РЦ MEGALIGHT",
+          "quantity": 0
+        },
+        {
+          "id": 7,
+          "name": "Талдыкорган",
+          "quantity": 0
+        },
+        {
+          "id": 8,
+          "name": "Тастак",
+          "quantity": 0
+        },
+        {
+          "id": 9,
+          "name": "Торговый зал",
+          "quantity": 0
+        },
+        {
+          "id": 10,
+          "name": "Востановленный продукт",
+          "quantity": 0
+        },
+        {
+          "id": 11,
+          "name": "перемещение",
+          "quantity": 0
+        },
+        {
+          "id": 12,
+          "name": "Основной склад",
+          "quantity": 0
+        },
+        {
+          "id": 13,
+          "name": "Алматы",
+          "quantity": 5
+        },
+        {
+          "id": 14,
+          "name": "ЩИТОВОЕ",
+          "quantity": 0
+        },
+        {
+          "id": 15,
+          "name": "РЦ UNIT",
+          "quantity": 0
+        },
+        {
+          "id": 16,
+          "name": "Образцы Отдел Закупа",
+          "quantity": 0
+        },
+        {
+          "id": 17,
+          "name": "Витрина ТЗ",
+          "quantity": 0
+        },
+        {
+          "id": 18,
+          "name": "Усть-Каменогорск",
+          "quantity": 0
+        },
+        {
+          "id": 19,
+          "name": "Тараз",
+          "quantity": 2
+        },
+        {
+          "id": 20,
+          "name": "Атырау",
+          "quantity": 3
+        },
+        {
+          "id": 21,
+          "name": "Караганда",
+          "quantity": 2
+        },
+        {
+          "id": 22,
+          "name": "Новосибирск",
+          "quantity": 0
+        },
+        {
+          "id": 23,
+          "name": "Актау",
+          "quantity": 0
+        },
+        {
+          "id": 24,
+          "name": "Нур-Султан",
+          "quantity": 8
+        },
+        {
+          "id": 25,
+          "name": "Шымкент (Тассай)",
+          "quantity": 1
+        }
+      ],
+      "description": "Автоматический выключатель DRX250 MT 3P 160А 18kA (арт. 027228) Legrand – мощное защитное устройство для предотвращения перегрузок и коротких замыканий в электрических сетях.\r\n\r\nОсновные характеристики:\r\n\r\n\tСерия: DRX250 MT\r\n\tКоличество полюсов: 3\r\n\tНоминальный ток: 160А\r\n\tОтключающая способность: 18kA\r\n\tНоминальное напряжение: 400В AC\r\n\tПроизводитель: Legrand\r\n\r\n\r\n\t Этот автоматический выключатель применяется в промышленных, коммерческих и распределительных системах, обеспечивая надежную защиту электрооборудования. Отличается долговечностью, высокой износостойкостью и простотой монтажа.",
+      "url": "https://ekt.kz/catalog/nizkovoltnaya_apparatura/silovye_avtomaticheskie_vyklyuchateli/drx250_mt_10_250_a_legrand/027228_av_drx250_mt_3f_160a_18ka_legrand_1/"
+    },
+    {
+      "id": 21182,
+      "article": "310100024_",
+      "name": "11204 ВА 63 (1ф) 20А 404029 Legrand (10) !!!",
+      "price": 941,
+      "quantity": 0,
+      "properties": {
+        "BRAND_PRIORITY": "1",
+        "CML2_ARTICLE": "310100024_",
+        "NOVINKA": "Нет",
+        "SPETSPREDLOZHENIE": "Да",
+        "CML2_TRAITS": [
+          "Товары приобретенные",
+          "Товар",
+          "310100024_",
+          "Нет",
+          "Да",
+          "604806 LR 1р 20А Legrand",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0"
+        ],
+        "CML2_TAXES": "16",
+        "KRATNOST_MIN": "1",
+        "KRATNOST_MAKS": "10",
+        "ARTIKULPOSTAVSHCHIKA": "404029х",
+        "POKAZYVAT_TSENY": "Нет",
+        "KOLICHESTVO_POLYUSOV": "1",
+        "NAZNACHENIE": " Розетки/линии с умеренными пусковыми токами",
+        "NOMINALNAYA_OTKLYUCHAYUSHCHAYA_SPOSOBNOST": "4,5кА",
+        "NOMINALNOE_NAPRYAZHENIE": "230В",
+        "NOMINALNYY_TOK": "20А",
+        "TIP_USTROYSTVA": "Автоматический выключатель с тепловым расцепителем",
+        "TORGOVAYA_MARKA": "Legrand",
+        "KHARAKTERISTIKA_SRABATYVANIYA": "C"
+      },
+      "stores": [
+        {
+          "id": 2,
+          "name": "Брак MEGALIGHT",
+          "quantity": 0
+        },
+        {
+          "id": 3,
+          "name": "Шымкент (ул.Байдукова)",
+          "quantity": 0
+        },
+        {
+          "id": 4,
+          "name": "Маркетинг MEGALIGHT",
+          "quantity": 0
+        },
+        {
+          "id": 5,
+          "name": "Никонов",
+          "quantity": 0
+        },
+        {
+          "id": 6,
+          "name": "РЦ MEGALIGHT",
+          "quantity": 0
+        },
+        {
+          "id": 7,
+          "name": "Талдыкорган",
+          "quantity": 0
+        },
+        {
+          "id": 8,
+          "name": "Тастак",
+          "quantity": 0
+        },
+        {
+          "id": 9,
+          "name": "Торговый зал",
+          "quantity": 0
+        },
+        {
+          "id": 10,
+          "name": "Востановленный продукт",
+          "quantity": 0
+        },
+        {
+          "id": 11,
+          "name": "перемещение",
+          "quantity": 0
+        },
+        {
+          "id": 12,
+          "name": "Основной склад",
+          "quantity": 0
+        },
+        {
+          "id": 13,
+          "name": "Алматы",
+          "quantity": 0
+        },
+        {
+          "id": 14,
+          "name": "ЩИТОВОЕ",
+          "quantity": 0
+        },
+        {
+          "id": 15,
+          "name": "РЦ UNIT",
+          "quantity": 0
+        },
+        {
+          "id": 16,
+          "name": "Образцы Отдел Закупа",
+          "quantity": 0
+        },
+        {
+          "id": 17,
+          "name": "Витрина ТЗ",
+          "quantity": 0
+        },
+        {
+          "id": 18,
+          "name": "Усть-Каменогорск",
+          "quantity": 0
+        },
+        {
+          "id": 19,
+          "name": "Тараз",
+          "quantity": 0
+        },
+        {
+          "id": 20,
+          "name": "Атырау",
+          "quantity": 0
+        },
+        {
+          "id": 21,
+          "name": "Караганда",
+          "quantity": 0
+        },
+        {
+          "id": 22,
+          "name": "Новосибирск",
+          "quantity": 0
+        },
+        {
+          "id": 23,
+          "name": "Актау",
+          "quantity": 0
+        },
+        {
+          "id": 24,
+          "name": "Нур-Султан",
+          "quantity": 0
+        },
+        {
+          "id": 25,
+          "name": "Шымкент (Тассай)",
+          "quantity": 0
+        }
+      ],
+      "description": "Автоматические выключатели тока (дифференциальные автоматические выключатели) являются обязательным элементом электрического оборудования дома. Их устанавливают для обеспечения безопасности жильцов и защиты проводки от перезагрузки, коротких замыканий. Автоматические выключатели представляют собой коммутационный аппарат для отключения тока при аномальной работе сети. Также они способны возобновлять электропитание при восстановлении нормального состояния электросети. Автоматические выключатели Legrand — продукция всемирно известной французской компании, поэтому она отвечает высоким европейским стандартам качества и основывается на последних научных достижениях.",
+      "url": "https://ekt.kz/catalog/nizkovoltnaya_apparatura/modulnye_avtomaticheskie_vyklyuchateli/11204_va_63_1f_20a_404029_legrand_10_/"
+    },
+    {
+      "id": 33703,
+      "article": "010400569_",
+      "name": "12120 АВ (1ф) 20А Schneider Electric (12)",
+      "price": 2295,
+      "quantity": 108,
+      "properties": {
+        "BRAND_PRIORITY": "1",
+        "CML2_ARTICLE": "010400569_",
+        "NOVINKA": "Нет",
+        "SPETSPREDLOZHENIE": "Нет",
+        "CML2_BAR_CODE": "13606481855630",
+        "CML2_TRAITS": [
+          "Товары приобретенные",
+          "Товар",
+          "010400569_",
+          "Нет",
+          "Нет",
+          "12120 АВ  (1ф) 20А Schneider Electric (12)",
+          "0",
+          "0,02",
+          "0",
+          "0",
+          "0"
+        ],
+        "CML2_TAXES": "16",
+        "KRATNOST_MIN": "1",
+        "KRATNOST_MAKS": "12",
+        "IMYAKARTINKI": "SchneiderElectric.png",
+        "KRATNOST_MAKS_1": "1",
+        "ARTIKULPOSTAVSHCHIKA": "R9F12120",
+        "insta": "Y",
+        "SLIDER_PHOTOS": [
+          "101397",
+          "101398"
+        ],
+        "KOLICHESTVO_POLYUSOV": "1",
+        "NAZNACHENIE": " Розетки/линии с умеренными пусковыми токами",
+        "NOMINALNAYA_OTKLYUCHAYUSHCHAYA_SPOSOBNOST": "20кА",
+        "NOMINALNOE_NAPRYAZHENIE": "230В",
+        "NOMINALNYY_TOK": "20А",
+        "TIP_USTANOVKI": "На Din-рейку ( Модульный )",
+        "TIP_USTROYSTVA": "Автоматический выключатель с тепловым расцепителем",
+        "TORGOVAYA_MARKA": "Schneider Electric",
+        "KHARAKTERISTIKA_SRABATYVANIYA": "C"
+      },
+      "stores": [
+        {
+          "id": 2,
+          "name": "Брак MEGALIGHT",
+          "quantity": 0
+        },
+        {
+          "id": 3,
+          "name": "Шымкент (ул.Байдукова)",
+          "quantity": 14
+        },
+        {
+          "id": 4,
+          "name": "Маркетинг MEGALIGHT",
+          "quantity": 0
+        },
+        {
+          "id": 5,
+          "name": "Никонов",
+          "quantity": 0
+        },
+        {
+          "id": 6,
+          "name": "РЦ MEGALIGHT",
+          "quantity": 0
+        },
+        {
+          "id": 7,
+          "name": "Талдыкорган",
+          "quantity": 0
+        },
+        {
+          "id": 8,
+          "name": "Тастак",
+          "quantity": 0
+        },
+        {
+          "id": 9,
+          "name": "Торговый зал",
+          "quantity": 0
+        },
+        {
+          "id": 10,
+          "name": "Востановленный продукт",
+          "quantity": 0
+        },
+        {
+          "id": 11,
+          "name": "перемещение",
+          "quantity": 0
+        },
+        {
+          "id": 12,
+          "name": "Основной склад",
+          "quantity": 0
+        },
+        {
+          "id": 13,
+          "name": "Алматы",
+          "quantity": 61
+        },
+        {
+          "id": 14,
+          "name": "ЩИТОВОЕ",
+          "quantity": 0
+        },
+        {
+          "id": 15,
+          "name": "РЦ UNIT",
+          "quantity": 0
+        },
+        {
+          "id": 16,
+          "name": "Образцы Отдел Закупа",
+          "quantity": 0
+        },
+        {
+          "id": 17,
+          "name": "Витрина ТЗ",
+          "quantity": 0
+        },
+        {
+          "id": 18,
+          "name": "Усть-Каменогорск",
+          "quantity": 2
+        },
+        {
+          "id": 19,
+          "name": "Тараз",
+          "quantity": 0
+        },
+        {
+          "id": 20,
+          "name": "Атырау",
+          "quantity": 0
+        },
+        {
+          "id": 21,
+          "name": "Караганда",
+          "quantity": 13
+        },
+        {
+          "id": 22,
+          "name": "Новосибирск",
+          "quantity": 0
+        },
+        {
+          "id": 23,
+          "name": "Актау",
+          "quantity": 0
+        },
+        {
+          "id": 24,
+          "name": "Нур-Султан",
+          "quantity": 12
+        },
+        {
+          "id": 25,
+          "name": "Шымкент (Тассай)",
+          "quantity": 6
+        }
+      ],
+      "description": "Автоматический выключатель (АВ) Resi9 используется для коммутации электрических цепей, также для защиты потребителей от перегрузок и короткого замыкания. В ассортимент Resi9 входят выключатели с номинальным током от 6 до 63А. Отличительной особенностью АВ Resi9 является наличие кривых отключения B и C, которые позволяют применить их в самых разнообразных модификациях электрических щитков.",
+      "url": "https://ekt.kz/catalog/novinki/shchitovoe_oborudovanie_aktsiya_10/12120_av_1f_20a_schneider_electric_12/"
+    }
+  ]
+}
