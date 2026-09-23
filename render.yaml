@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: ekt-hackalem-demo
+    runtime: python
+    plan: free
+    region: frankfurt
+    branch: main
+    buildCommand: env PUBLIC_MODE=0 HOST=127.0.0.1 python -m unittest discover -s tests -q
+    startCommand: python server.py
+    healthCheckPath: /healthz
+    autoDeployTrigger: off
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.12
+      - key: HOST
+        value: 0.0.0.0
+      - key: PUBLIC_MODE
+        value: "1"
+      - key: DEMO_ACCESS_CODE
+        sync: false
+      - key: EKT_API_USER
+        sync: false
+      - key: EKT_API_PASSWORD
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        value: gpt-4.1-mini
+      - key: OPENAI_DAILY_CALL_LIMIT
+        value: "100"
+      - key: SESSION_REQUESTS_PER_MINUTE
+        value: "12"

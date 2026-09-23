@@ -1,6 +1,7 @@
 """Local HackAlem prototype. Catalog is live; cart is explicitly demonstration-only."""
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 import base64
+from hosting_guard import HostingGuard, DemoLimit
 from uploads import extract_items, MAX_FILE
 from analogs import comparison
 from concurrent.futures import ThreadPoolExecutor
@@ -27,12 +28,16 @@ for line in (ROOT / '.env').read_text().splitlines() if (ROOT / '.env').exists()
         k, v = line.split('=', 1)
         os.environ.setdefault(k.strip(), v.strip())
 
+hosting_guard = HostingGuard(os.environ)
+
 
 class UserError(Exception):
     pass
 
 
 def fetch_json(url, headers=None, body=None):
+    if urllib.parse.urlparse(url).hostname == 'api.openai.com':
+        hosting_guard.reserve_openai_call()
     req = urllib.request.Request(url, data=json.dumps(body).encode() if body is not None else None,
                                  headers=headers or {})
     try:
@@ -302,6 +307,12 @@ class Handler(BaseHTTPRequestHandler):
     def log_message(self, *args):
         pass  # Do not log conversation text, keys or customer data.
 
+    def authorize(self):
+        if hosting_guard.authorized(self.headers.get('Authorization', '')):
+            return True
+        self.send({'error': 'Для демонстрации войдите с логином jury и выданным кодом доступа.'}, 401)
+        return False
+
     def session(self):
         cookies = SimpleCookie(self.headers.get('Cookie', ''))
         sid = cookies['ekt_session'].value if 'ekt_session' in cookies else None
@@ -323,14 +334,23 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header('Content-Length', str(len(data)))
         self.send_header('Cache-Control', 'no-store')
         self.send_header('X-Content-Type-Options', 'nosniff')
+        if status == 401:
+            self.send_header('WWW-Authenticate', 'Basic realm="EKT jury demo", charset="UTF-8"')
+        if status == 429:
+            self.send_header('Retry-After', '60')
         self.send_header('Content-Security-Policy', "default-src 'self'; img-src 'self' https://ekt.kz; style-src 'self'; frame-ancestors 'none'; base-uri 'none'")
         if hasattr(self, 'sid'):
-            self.send_header('Set-Cookie', f'ekt_session={self.sid}; HttpOnly; SameSite=Strict; Path=/')
+            secure = '; Secure' if hosting_guard.enabled else ''
+            self.send_header('Set-Cookie', f'ekt_session={self.sid}; HttpOnly; SameSite=Strict; Path=/{secure}')
         self.end_headers()
         self.wfile.write(data)
 
     def do_GET(self):
         path = urllib.parse.urlparse(self.path).path
+        if path == '/healthz':
+            return self.send({'ok': True})
+        if not self.authorize():
+            return
         s = self.session()
         if path == '/api/status':
             return self.send({'ready': catalog.ready, 'count': len(catalog.index), 'error': catalog.error,
@@ -345,10 +365,14 @@ class Handler(BaseHTTPRequestHandler):
         return self.send(file.read_bytes(), content_type=mime + '; charset=utf-8')
 
     def do_POST(self):
+        if not self.authorize():
+            return
         s = self.session()
         if not secrets.compare_digest(self.headers.get('X-CSRF-Token', ''), s['csrf']):
             return self.send({'error': 'Обновите страницу: сессия истекла.'}, 403)
         try:
+            if self.path in ('/api/chat', '/api/upload', '/api/propose', '/api/confirm'):
+                hosting_guard.reserve_request(s)
             size = int(self.headers.get('Content-Length', 0))
             if size <= 0 or size > (MAX_FILE * 4 // 3 + 2000 if self.path == '/api/upload' else 20000):
                 raise UserError('Слишком большой запрос.')
@@ -412,6 +436,8 @@ class Handler(BaseHTTPRequestHandler):
             if os.getenv('OPENAI_API_KEY') and not policy_question and not DEMO_MODE:
                 try:
                     answer = model_answer(message, products, s['history'])
+                except DemoLimit as exc:
+                    ai_error = str(exc)
                 except UserError:
                     ai_error = 'ИИ временно недоступен. Ниже — проверенные карточки каталога.'
             if not answer:
@@ -425,6 +451,8 @@ class Handler(BaseHTTPRequestHandler):
             if primary_ids:
                 s['last_ids'] = primary_ids
             return self.send({'answer': answer, 'products': products, 'notice': '\n'.join(([ai_error] if ai_error else []) + notices), 'sources': ['https://ekt.kz/checkout-delivery/', 'https://ekt.kz/about/howto/'] if policy_question else []})
+        except DemoLimit as exc:
+            self.send({'error': str(exc)}, 429)
         except UserError as exc:
             self.send({'error': str(exc)}, 400)
         except (ValueError, TypeError, KeyError):
@@ -434,7 +462,8 @@ class Handler(BaseHTTPRequestHandler):
 
 
 if __name__ == '__main__':
+    hosting_guard.validate()
     threading.Thread(target=catalog.initialize, daemon=True).start()
     port = int(os.getenv('PORT', '8765'))
-    print(f'EKT prototype: http://127.0.0.1:{port}', flush=True)
-    ThreadingHTTPServer(('127.0.0.1', port), Handler).serve_forever()
+    print(f'EKT prototype listening on {hosting_guard.host}:{port}', flush=True)
+    ThreadingHTTPServer((hosting_guard.host, port), Handler).serve_forever()
