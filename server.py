@@ -365,10 +365,16 @@ class Handler(BaseHTTPRequestHandler):
             message = str(body.get('message', '')).strip()[:2000]
             if not message:
                 raise UserError('Введите вопрос о товаре.')
-            policy_question = bool(re.search('достав|оплат|минимальн.*заказ', message.lower()))
+            policy_question = bool(re.search(r'достав|оплат|минимальн.*(?:заказ|сумм|парти)|минимум.*заказ', message.lower()))
+            analog_question = bool(re.search('аналог|замен', message.lower()))
             found = [] if policy_question else catalog.search(message)
-            if not found and re.search(r'его|этот|него|сертификат|характеристик', message.lower()):
+            if not found and not policy_question and (analog_question or re.search(r'его|этот|него|сертификат|характеристик', message.lower())):
+                if len(s['last_ids']) > 1:
+                    return self.send({'answer': 'Мы обсуждали несколько товаров. Укажите артикул, для которого нужен ответ или аналог.', 'products': [], 'notice': None, 'sources': []})
                 found = [{'id': i} for i in s['last_ids']]
+                if analog_question and not found:
+                    return self.send({'answer': 'Укажите артикул или название товара, для которого нужен аналог.', 'products': [], 'notice': None, 'sources': []})
+            primary_ids = [p['id'] for p in found]
             with ThreadPoolExecutor(max_workers=4) as pool:
                 products = list(pool.map(lambda p: catalog.detail(p['id']), found))
             notices = []
@@ -395,15 +401,15 @@ class Handler(BaseHTTPRequestHandler):
                 except UserError:
                     ai_error = 'ИИ временно недоступен. Ниже — проверенные карточки каталога.'
             if not answer:
-                if re.search('достав|оплат|парти', message.lower()):
+                if policy_question:
                     answer = 'По странице «Условия доставки и оплаты»: физлица — карта онлайн, наличные при получении, наличные или POS при самовывозе. Юрлица — перевод по счёту либо наличные при самовывозе; представителю нужны удостоверение личности и актуальная доверенность.\n\nПо доставке есть противоречия: основной раздел указывает для Алматы порог бесплатной доставки свыше 30 000 ₸ и срок до 48 часов (09:00–17:00); страница «Как сделать заказ» — свыше 15 000 ₸, следующий день (09:00–18:00). Поэтому стоимость и срок следует подтвердить у менеджера. Для других городов также согласуйте адрес, вес и объём.\n\nОбщая минимальная сумма заказа в проверенных разделах не найдена. Кратность отдельной позиции берём из карточки товара. Проверено 23.09.2026; ссылки ниже.'
                 elif products:
                     answer = 'Нашёл позиции в доступной выборке каталога. Остатки и характеристики только что получены из ekt.kz. Выберите товар и количество — перед добавлением я отдельно попрошу подтверждение.'
                 else:
                     answer = 'В текущей выборке товар не найден. Уточните артикул или название. Сейчас доступна ограниченная выборка, а не весь каталог ekt.kz.'
             s['history'] = (s['history'] + [{'role': 'user', 'content': message}, {'role': 'assistant', 'content': answer}])[-8:]
-            if products:
-                s['last_ids'] = [p['id'] for p in products]
+            if primary_ids:
+                s['last_ids'] = primary_ids
             return self.send({'answer': answer, 'products': products, 'notice': '\n'.join(([ai_error] if ai_error else []) + notices), 'sources': ['https://ekt.kz/checkout-delivery/', 'https://ekt.kz/about/howto/'] if policy_question else []})
         except UserError as exc:
             self.send({'error': str(exc)}, 400)
