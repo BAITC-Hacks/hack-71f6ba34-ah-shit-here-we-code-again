@@ -18,6 +18,9 @@ class SearchTests(unittest.TestCase):
     def test_exact_id_ignores_incidental_words(self):
         self.assertEqual([p['id'] for p in self.catalog.search('Товар 1 в наличии?')], [1])
 
+    def test_ocr_trailing_underscore_can_be_restored_when_unique(self):
+        self.assertEqual([p['id'] for p in self.catalog.search('200300285')], [1])
+
     def test_article_prefix_is_not_exact_match(self):
         self.assertEqual(self.catalog.search('20030028'), [])
 
